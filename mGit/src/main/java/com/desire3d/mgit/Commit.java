@@ -71,8 +71,10 @@ public class Commit {
 	 * */
 	public Iterable<PushResult> commitAllAndPush(final Git git, final String commitMessage, final String username, final String password) throws NoHeadException, NoMessageException, UnmergedPathsException, ConcurrentRefUpdateException, WrongRepositoryStateException, AbortedByHookException, GitAPIException {
 		RevCommit result = git.commit()
-		   .setMessage(commitMessage)
-		   .call();
+							  .setCommitter(username, username)
+							  .setAuthor(username, username)
+							  .setMessage(commitMessage)
+							  .call();
 		LOGGER.info("Changes commited successfully, Commit ID : " + result.getId().getName());
 		return push(git, username, password);
 	}
@@ -89,8 +91,10 @@ public class Commit {
 		Git git = indexFiles.addAllFilesToIndex(localDir);
 		
 		RevCommit result = git.commit()
-		   .setMessage(commitMessage)
-		   .call();
+							  .setCommitter(username, username)
+							  .setAuthor(username, username)
+							  .setMessage(commitMessage)
+							  .call();
 		
 		LOGGER.info("Changes commited successfully, Commit ID : " + result.getId().getName());
 		return push(git, username, password);
@@ -114,6 +118,8 @@ public class Commit {
 			commitCommand.setOnly(filePath);
 		}
 		RevCommit result = commitCommand.setMessage(commitMessage)
+										.setCommitter(username, username)
+										.setAuthor(username, username)
 										.call();
 		LOGGER.info("Changes commited successfully, Commit ID : " + result.getId().getName());
 		return push(git, username, password);

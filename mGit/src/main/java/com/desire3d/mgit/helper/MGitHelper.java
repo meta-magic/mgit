@@ -147,10 +147,7 @@ public abstract class MGitHelper {
 		try {
 			IndexFiles indexFiles = new IndexFiles();
 			Git git = indexFiles.addAllFilesToIndex(localDir);
-			Set<String> changes = new RepositoryStatus().getFilesAddedToIndex(git);
-			for (String change : changes) {
-				LOGGER.info(change);
-			}
+			new RepositoryStatus().getFilesAddedToIndex(git);
 			Commit commit = new Commit();
 			Iterable<PushResult> pushresult = commit.commitAllAndPush(git, commitMessage, username, password);	
 			for (final PushResult result : pushresult) {

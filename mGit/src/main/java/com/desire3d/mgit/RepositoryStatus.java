@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -24,6 +25,8 @@ import com.desire3d.mgit.helper.MGitHelper;
  */
 public class RepositoryStatus {
 	
+	private static final Logger LOGGER = Logger.getLogger(MGitHelper.class);
+	
 	/**
 	 * Get files added to the index
 	 * 
@@ -33,6 +36,22 @@ public class RepositoryStatus {
 	public Set<String> getFilesAddedToIndex(final Git git) throws NoWorkTreeException, GitAPIException {
 		Status status = git.status().call();
 		Set<String> added = status.getAdded();
+		LOGGER.info("Indexed files");
+		for (String change : added) {
+			LOGGER.info("Added "+ change);
+		}
+		Set<String> changed = status.getChanged();
+		for (String change : changed) {
+			LOGGER.info("Changed "+ change);
+		}
+		Set<String> modified = status.getModified();
+		for (String change : modified) {
+			LOGGER.info("Modified "+ change);
+		}
+		Set<String> removed = status.getRemoved();
+		for (String change : removed) {
+			LOGGER.info("Removed "+ change);
+		}
 		return added;
 	}
 	
