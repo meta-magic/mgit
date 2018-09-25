@@ -3,8 +3,8 @@ package com.desire3d.mgit.helper;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -181,14 +181,22 @@ public abstract class MGitHelper {
 				}
 				System.out.println("Moving from :" + appendGitDefaultDir(tempFolder.getAbsolutePath()) + " To :"
 						+ appendGitDefaultDir(localDir));
-				Files.move(Paths.get(appendGitDefaultDir(tempFolder.getAbsolutePath())),
-						Paths.get(appendGitDefaultDir(localDir)), StandardCopyOption.REPLACE_EXISTING);
+				// MOVING GIT FILE
+				moveGitFolderUsingCommand(appendGitDefaultDir(tempFolder.getAbsolutePath()),
+						appendGitDefaultDir(localDir));
+				// Files.move(Paths.get(appendGitDefaultDir(tempFolder.getAbsolutePath())),
+				// Paths.get(appendGitDefaultDir(localDir)),
+				// StandardCopyOption.REPLACE_EXISTING);
 				System.out.println("Moved Succesfully from :" + appendGitDefaultDir(tempFolder.getAbsolutePath())
 						+ " To :" + appendGitDefaultDir(localDir));
 			} else {
 				System.out.println("Local dir is null moving started" + localDir);
-				Files.move(Paths.get(appendGitDefaultDir(tempFolder.getAbsolutePath())),
-						Paths.get(appendGitDefaultDir(localDir)), StandardCopyOption.REPLACE_EXISTING);
+				// MOVING GIT FILE
+				moveGitFolderUsingCommand(appendGitDefaultDir(tempFolder.getAbsolutePath()),
+						appendGitDefaultDir(localDir));
+				// Files.move(Paths.get(appendGitDefaultDir(tempFolder.getAbsolutePath())),
+				// Paths.get(appendGitDefaultDir(localDir)),
+				// StandardCopyOption.REPLACE_EXISTING);
 				System.out.println("Local dir is null moved completely" + localDir);
 			}
 			// Files.move(Paths.get(appendGitDefaultDir(tempFolder.getAbsolutePath())),
@@ -347,6 +355,24 @@ public abstract class MGitHelper {
 		sb.append("/");
 		sb.append(GIT_DEFAULT_DIRECTORY);
 		return sb.toString();
+	}
+
+	// THIS METHOD EXECUTE PROCESS FOR MOVING GIT FILE FROM /TMP TO PROJECT LOCATION
+	private static void moveGitFolderUsingCommand(final String source, final String destination) {
+		List<String> commandList = new ArrayList<>();
+		commandList.add("mv");
+		commandList.add(source);
+		commandList.add(destination);
+		LOGGER.info("Move git folder to project git folder SOURCE : " + source + " Destination : " + destination);
+		ProcessBuilder processBuilder = new ProcessBuilder(commandList);
+		try {
+			LOGGER.info("Moving process started");
+			Process process=processBuilder.start();
+			LOGGER.info("All files inside source: " + source + "removed to dest " + destination);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }
