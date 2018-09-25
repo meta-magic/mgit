@@ -159,7 +159,9 @@ public abstract class MGitHelper {
 		File tempFolder = null;
 		try {
 			tempFolder = Files.createTempDirectory("TempCloningDir").toFile();
+			System.out.println("Cloning started from Temp :" + tempFolder);
 			cloneRepository(remoteURL, username, password, tempFolder);
+			System.out.println("Cloning done ");
 			// File file = new File((localDir) + "/.git");
 			if (localDir != null) {
 
@@ -169,33 +171,43 @@ public abstract class MGitHelper {
 				if (directory.exists()) {
 
 					try {
-
+						System.out.println("Directory deleted started :" + directory);
 						delete(directory);
-
+						System.out.println("Directory deleted successfully : " + directory);
 					} catch (IOException e) {
+						System.out.println(e.getMessage());
 						e.printStackTrace();
 					}
 				}
-
+				System.out.println("Moving from :" + appendGitDefaultDir(tempFolder.getAbsolutePath()) + " To :"
+						+ appendGitDefaultDir(localDir));
 				Files.move(Paths.get(appendGitDefaultDir(tempFolder.getAbsolutePath())),
 						Paths.get(appendGitDefaultDir(localDir)), StandardCopyOption.REPLACE_EXISTING);
-
+				System.out.println("Moved Succesfully from :" + appendGitDefaultDir(tempFolder.getAbsolutePath())
+						+ " To :" + appendGitDefaultDir(localDir));
 			} else {
+				System.out.println("Local dir is null moving started" + localDir);
 				Files.move(Paths.get(appendGitDefaultDir(tempFolder.getAbsolutePath())),
 						Paths.get(appendGitDefaultDir(localDir)), StandardCopyOption.REPLACE_EXISTING);
+				System.out.println("Local dir is null moved completely" + localDir);
 			}
 			// Files.move(Paths.get(appendGitDefaultDir(tempFolder.getAbsolutePath())),
 			// Paths.get(appendGitDefaultDir(localDir)),
 			// StandardCopyOption.REPLACE_EXISTING);
 			LOGGER.info("Cloned repository configured to project at " + localDir);
+			System.out.println("Commit and push started " + localDir);
 			commitAllAndPush(username, password, commitMessage, localDir);
+			System.out.println("Commit and push done " + localDir);
 		} catch (
 
 		Throwable e) {
+			System.out.println("IO Error : " + e.getMessage());
 			e.printStackTrace();
 			if (e instanceof BaseMGitAPIException) {
+				System.out.println("BaseMGitAPIException Error : " + e.getMessage());
 				throw (BaseMGitAPIException) e;
 			}
+			System.out.println("IO Error : " + e.getMessage());
 			throw new LocalRepositoryException(e.getMessage(), e);
 		}
 	}
@@ -215,6 +227,7 @@ public abstract class MGitHelper {
 	public static void commitAllAndPush(final String username, final String password, final String commitMessage,
 			final String localDir) throws CommitFailureException, BaseMGitAPIException {
 		try {
+			System.out.println("Commit & push  started.");
 			IndexFiles indexFiles = new IndexFiles();
 			Git git = indexFiles.addAllFilesToIndex(localDir);
 			new RepositoryStatus().getFilesAddedToIndex(git);
@@ -222,12 +235,15 @@ public abstract class MGitHelper {
 			Iterable<PushResult> pushresult = commit.commitAllAndPush(git, commitMessage, username, password);
 			for (final PushResult result : pushresult) {
 				for (final RemoteRefUpdate upd : result.getRemoteUpdates()) {
+					System.out.println("Commit & push status " + upd.getStatus());
 					LOGGER.info(upd.getStatus());
 				}
 			}
 		} catch (Throwable e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 			if (e instanceof BaseMGitAPIException) {
+				System.out.println("BaseMGitAPIException " + e.getMessage());
 				throw (BaseMGitAPIException) e;
 			}
 			throw new CommitFailureException("Commit all & Push failed due to cause - " + e.getMessage(), e);
