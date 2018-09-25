@@ -1,7 +1,10 @@
 package com.desire3d.mgit.helper;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -367,7 +370,14 @@ public abstract class MGitHelper {
 		ProcessBuilder processBuilder = new ProcessBuilder(commandList);
 		try {
 			LOGGER.info("Moving process started");
-			Process process=processBuilder.start();
+			Process process = processBuilder.start();
+			InputStream inputStream = process.getInputStream();
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream), 1);
+			String line;
+			System.out.println("**********Git initialization done **********");
+			while ((line = bufferedReader.readLine()) != null) {
+				System.out.println(line);
+			}
 			LOGGER.info("All files inside source: " + source + "removed to dest " + destination);
 		} catch (IOException e) {
 			e.printStackTrace();
